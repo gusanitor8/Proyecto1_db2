@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse, Response
 from Connection.DBConnection import get_books, get_book_by_name, get_book_image, get_author_by_id
 from utils.JsonEncoder import JSONencoder
 from data_classes.data_classes import Authors
-from PIL import Image
 import json
 
 responses_router = APIRouter()
