@@ -11,5 +11,13 @@ db = client[DB_NAME]
 
 
 def get_books(page: int, page_size: int = 10):
-    collection = db["authors"]
+    collection = db["books"]
     return list(collection.find().skip(page * page_size).limit(page_size))
+
+
+def get_book_by_name(name: str):
+    collection = db["books"]
+    return collection.find_one({"title": name})
+
+
+

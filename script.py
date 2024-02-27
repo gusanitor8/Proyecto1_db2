@@ -21,10 +21,13 @@ collection_users = db["users"]
 fs = GridFS(db)
 
 # data generation
-BOOKS_NUM = 1000
+BOOKS_NUM = 10_000
 AUTHORS_NUM = 500
-USER_NUM = 100
+USER_NUM = 2_000
+MAX_TRANSACTION_NUM = 500
 
+genres = ["Fiction", "Non-Fiction", "Science Fiction", "Fantasy", "Mystery", "Thriller", "Romance", "Western",
+          "Horror", "Historical Fiction"]
 books_ids = []
 authors_ids = []
 grid_ids = []
@@ -58,7 +61,7 @@ def make_author():
 def make_book():
     test_book = {
         "title": fake.sentence(),
-        "genre": fake.word(),
+        "genre": random.sample(genres, k=fake.random_int(min=1, max=3)),
         "publication_date": datetime.isoformat(fake.date_time()),
         "ISBN": fake.isbn13(),
         "available_copies": fake.random_int(min=0, max=50),
@@ -80,6 +83,7 @@ def upload_images():
     filenames = os.listdir("images")
     filepath = "images/"
 
+    print("Uploading images")
     for filename in filenames:
         with open(filepath + filename, "rb") as f:
             file_data = f.read()
@@ -92,7 +96,7 @@ def upload_authors():
     # insert authors
     with client.start_session() as session:
         with session.start_transaction():
-            print("transaction began")
+            print("Author transaction began")
             try:
                 for _ in range(AUTHORS_NUM):
                     author = make_author()
@@ -111,40 +115,46 @@ def upload_authors():
 
 def upload_books():
     # insert books
-    with client.start_session() as session:
-        with session.start_transaction():
-            print("books transaction began")
-            try:
-                for _ in range(BOOKS_NUM):
-                    book = make_book()
-                    book["author_id"] = fake.random_element(authors_ids)
-                    book["cover_image"] = fake.random_element(grid_ids)
-                    books_ids.append(collection_books.insert_one(book, session=session).inserted_id)
-            except Exception as e:
-                print(e)
-                session.abort_transaction()
-            else:
-                session.commit_transaction()
-                print("Books data inserted successfully")
+    sub_transaction_num = BOOKS_NUM // MAX_TRANSACTION_NUM
+
+    for _ in range(sub_transaction_num):
+        with client.start_session() as session:
+            with session.start_transaction():
+                print("Books transaction began")
+                try:
+                    for _ in range(MAX_TRANSACTION_NUM):
+                        book = make_book()
+                        book["author_id"] = fake.random_element(authors_ids)
+                        book["cover_image"] = fake.random_element(grid_ids)
+                        books_ids.append(collection_books.insert_one(book, session=session).inserted_id)
+                except Exception as e:
+                    print(e)
+                    session.abort_transaction()
+                else:
+                    session.commit_transaction()
+                    print("Books data inserted successfully")
 
 
 def upload_users():
     # insert users
-    with client.start_session() as session:
-        with session.start_transaction():
-            print("users transaction began")
-            try:
-                for _ in range(USER_NUM):
-                    user = make_user()
-                    borrowed_books = random.sample(books_ids, k=fake.random_int(min=0, max=5))
-                    user["borrowed_books"] = borrowed_books
-                    collection_users.insert_one(user, session=session)
-            except Exception as e:
-                print(e)
-                session.abort_transaction()
-            else:
-                session.commit_transaction()
-                print("Users data inserted successfully")
+    sub_transaction_num = USER_NUM // MAX_TRANSACTION_NUM
+
+    for _ in range(sub_transaction_num):
+        with client.start_session() as session:
+            with session.start_transaction():
+                print("Users transaction began")
+                try:
+                    for _ in range(MAX_TRANSACTION_NUM):
+                        user = make_user()
+                        borrowed_books = random.sample(books_ids, k=fake.random_int(min=0, max=5))
+                        user["borrowed_books"] = borrowed_books
+                        collection_users.insert_one(user, session=session)
+                except Exception as e:
+                    print(e)
+                    session.abort_transaction()
+                else:
+                    session.commit_transaction()
+                    print("Users data inserted successfully")
 
 
 def run():
