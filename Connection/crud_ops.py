@@ -36,7 +36,7 @@ def get_author_by_keyword(keyword: str):
     collection = db["authors"]
     pipeline = [
         {
-            "$match": {"name": {"$regex": f".*{keyword}.*"}},
+            "$match": {"name": {"$regex": f".*{keyword}.*", "$options": "i"}},
             # Match documents where "name" field contains the keyword (case-insensitive)
         },
         {
