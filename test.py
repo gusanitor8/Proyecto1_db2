@@ -1,5 +1,5 @@
 import pytest
-from Connection.DBConnection import get_books, get_book_by_name
+from Connection.DBConnection import get_books, get_book_by_name, get_book_image
 
 
 def test_get_books():
@@ -15,3 +15,9 @@ def test_get_book_by_name():
     res = get_book_by_name(name)
     print(res)
     assert res is not None
+
+
+def test_get_book_image():
+    book_tite = "Add perhaps including commercial cover."
+    decoded_image = get_book_image(book_tite)
+    print("")
