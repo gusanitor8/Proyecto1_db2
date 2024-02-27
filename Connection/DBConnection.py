@@ -1,5 +1,6 @@
 from pymongo.mongo_client import MongoClient
 from data_classes.data_classes import Authors
+from data_classes.data_classes import Books, Authors
 from gridfs import GridFS
 from dotenv import load_dotenv
 from bson import ObjectId
@@ -81,7 +82,7 @@ def delete_author(author_id: str):
         return False
 
 
-def add_book(book: dict, author_id: str):
+def add_book(book: Books, author_id: str):
     collection = db["books"]
     book = book.dict()
     try:
@@ -90,4 +91,17 @@ def add_book(book: dict, author_id: str):
         return True
     except Exception as e:
         print(f"Error inserting book: {e}")
+        return False
+
+
+def update_book(book: Books, book_id: str):
+    collection = db["books"]
+    book = book.dict()
+    book_id = ObjectId(book_id)
+
+    try:
+        collection.update_one({"_id": book_id}, {"$set": book})
+        return True
+    except Exception as e:
+        print(f"Error updating book: {e}")
         return False

@@ -3,6 +3,7 @@ from typing import List, Optional
 
 
 class Books(BaseModel):
+    _id: Optional[str] = None
     title: str
     genre: List[str]
     publication_date: str
