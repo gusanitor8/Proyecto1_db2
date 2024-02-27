@@ -1,4 +1,5 @@
 from pymongo.mongo_client import MongoClient
+from data_classes.data_classes import Authors
 from gridfs import GridFS
 from dotenv import load_dotenv
 from bson import ObjectId
@@ -45,3 +46,7 @@ def get_author_by_id(author_id: str):
     collection = db["authors"]
     o_id = ObjectId(author_id)
     return collection.find_one({"_id": o_id})
+
+
+def add_author(author: Authors):
+    pass

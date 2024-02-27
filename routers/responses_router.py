@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, Response
 from Connection.DBConnection import get_books, get_book_by_name, get_book_image, get_author_by_id
 from utils.JsonEncoder import JSONencoder
+from data_classes.data_classes import Authors
 from PIL import Image
 import json
 
@@ -36,6 +37,11 @@ def get_book_image_(title: str):
         media_type=f"image/jpeg",
         status_code=200
     )
+
+@responses_router.post("/authors/add")
+def add_author_(author: Authors):
+    result = author.dict()
+    return Response(content=json.dumps(result, indent=4, cls=JSONencoder), status_code=200)
 
 
 @responses_router.get("/authors/get/{author_id}")
