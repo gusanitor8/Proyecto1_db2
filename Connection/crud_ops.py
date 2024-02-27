@@ -1,18 +1,7 @@
-from pymongo.mongo_client import MongoClient
 from data_classes.data_classes import Authors
 from data_classes.data_classes import Books, Authors
-from gridfs import GridFS
-from dotenv import load_dotenv
 from bson import ObjectId
-import os
-import certifi
-
-load_dotenv()
-DB_NAME = "Testing"
-URI = os.getenv('ENV_DB_URI')
-client = MongoClient(URI, tlsCAFile=certifi.where())
-db = client[DB_NAME]
-fs = GridFS(db)
+from Connection.database import db, fs
 
 
 def get_books(page: int, page_size: int = 10):
@@ -41,6 +30,28 @@ def get_book_image(name: str):
             print(f"Error retrieving image: {e}")
 
     return None
+
+
+def get_author_by_keyword(keyword: str):
+    collection = db["authors"]
+    pipeline = [
+        {
+            "$match": {"name": {"$regex": f".*{keyword}.*"}},
+            # Match documents where "name" field contains the keyword (case-insensitive)
+        },
+        {
+            "$project": {
+                "_id": 1,  # Exclude the original "_id" field if not needed
+                "name": 1,  # Include the "name" field
+            }
+        },
+        {
+            "$limit": 10  # Limit the results to 10
+        }
+    ]
+
+    results = list(collection.aggregate(pipeline))
+    return results
 
 
 def get_author_by_id(author_id: str):

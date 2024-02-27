@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from middlewares.error_handler import ErrorHandler
 from middlewares.cors_middleware import get_origins
 from routers.responses_router import responses_router
-from dotenv import load_dotenv
-import os
+from routers.statistics import statistics_router
 
 app = FastAPI()
 app.title = "Bookify API"
@@ -21,3 +20,4 @@ app.add_middleware(
 # Error Handler
 app.add_middleware(ErrorHandler)
 app.include_router(responses_router)
+app.include_router(statistics_router)
