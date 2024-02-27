@@ -49,4 +49,45 @@ def get_author_by_id(author_id: str):
 
 
 def add_author(author: Authors):
-    pass
+    try:
+        collection = db["authors"]
+        author = author.dict()
+        collection.insert_one(author)
+        return True
+    except Exception as e:
+        print(f"Error inserting author: {e}")
+        return False
+
+
+def update_author(author: Authors, author_id: str):
+    collection = db["authors"]
+    try:
+        collection.update_one({"_id": ObjectId(author_id)}, {"$set": author.dict()})
+        return True
+    except Exception as e:
+        print(f"Error updating author: {e}")
+        return False
+
+
+def delete_author(author_id: str):
+    collection = db["authors"]
+    collection_books = db["books"]
+    try:
+        collection_books.delete_many({"author_id": ObjectId(author_id)})
+        collection.delete_one({"_id": ObjectId(author_id)})
+        return True
+    except Exception as e:
+        print(f"Error deleting author: {e}")
+        return False
+
+
+def add_book(book: dict, author_id: str):
+    collection = db["books"]
+    book = book.dict()
+    try:
+        book["author_id"] = ObjectId(author_id)
+        collection.insert_one(book)
+        return True
+    except Exception as e:
+        print(f"Error inserting book: {e}")
+        return False
