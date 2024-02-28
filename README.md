@@ -1,4 +1,7 @@
 # Mongo Charts
+## Video Explicativo
+[Video Explicativo](https://youtu.be/XU1zgMMHLTk)
+
 
 ![Screenshot 2024-02-27 at 11.09.48 PM.png](images%2FScreenshot%202024-02-27%20at%2011.09.48%E2%80%AFPM.png)
 ## Justificación 
