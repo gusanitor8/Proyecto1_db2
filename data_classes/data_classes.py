@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from enum import Enum
 
 
 class Books(BaseModel):
@@ -22,7 +23,22 @@ class Authors(BaseModel):
     nationality: str
 
 
-class UserDisplayParams(BaseModel):
-    sort: Optional[int] = None
+class ParamEnum(Enum):
+    BORROWED_BOOKS = "borrowed_books"
+    NAME = "name"
+    EMAIL = "email"
+    USERNAME = "username"
 
-    pass
+
+class SortEnum(Enum):
+    DESC = -1
+    ASC = 1
+    AS_IS = 0
+
+
+class UserDisplayParams(BaseModel):
+    sort: SortEnum
+    filter: Optional[ParamEnum] = None
+    param: ParamEnum
+
+

@@ -1,6 +1,7 @@
 import pytest
 from Connection.crud_ops import get_books, get_book_by_name, get_book_image, get_author_by_keyword
-from Connection.agregations import get_top_authors
+from Connection.agregations import get_top_authors, user_projection
+from data_classes.data_classes import UserDisplayParams
 from src.plotting import plot_top_authors
 
 
@@ -35,5 +36,13 @@ def test_get_top_authors():
 def test_get_author_by_keyword():
     keyword = "Ma"
     res = get_author_by_keyword(keyword)
+    print(res)
+    assert res is not None
+
+
+def test_user_projection():
+    params = {"sort": 1, "filter": "name"}
+    params = UserDisplayParams(**params)
+    res = user_projection(params)
     print(res)
     assert res is not None

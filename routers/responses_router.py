@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse, Response
 from Connection.crud_ops import get_books, get_book_by_name, get_book_image, get_author_by_id, add_author, \
     update_author, delete_author, add_book, update_book, get_author_by_keyword, delete_book
 from utils.JsonEncoder import JSONencoder
-from Connection.agregations import get_author_count, get_book_count
-from data_classes.data_classes import Authors, Books
+from Connection.agregations import get_author_count, get_book_count, user_projection
+from data_classes.data_classes import Authors, Books, UserDisplayParams
 import json
 
 responses_router = APIRouter()
@@ -128,7 +128,13 @@ def delete_author_(author_id: str):
         return Response(content="Error, author not deleted", status_code=500)
 
 
-@responses_router.put("/users/get/{page}", tags=["users"])
-def display_users_(page: int):
-    # TODO: Implement this
-    pass
+@responses_router.post("/users/get/{page}", tags=["users"])
+def display_users_(params: UserDisplayParams, page: int):
+    print(page)
+    result = user_projection(params)
+
+    if result:
+        result = json.dumps(result, indent=4, cls=JSONencoder)
+        return Response(content=result, media_type="application/json", status_code=200)
+    else:
+        return Response(content=None, status_code=404)
