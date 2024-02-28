@@ -131,7 +131,7 @@ def delete_author_(author_id: str):
 @responses_router.post("/users/get/{page}", tags=["users"])
 def display_users_(params: UserDisplayParams, page: int):
     print(page)
-    result = user_projection(params)
+    result = user_projection(params, page)
 
     if result:
         result = json.dumps(result, indent=4, cls=JSONencoder)

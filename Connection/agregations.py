@@ -1,5 +1,7 @@
 from Connection.database import db, fs
 from data_classes.data_classes import UserDisplayParams
+from typing import List
+from bson import ObjectId
 
 
 def get_top_authors():
@@ -70,8 +72,25 @@ def user_projection(user_params: UserDisplayParams, page: int):
     pipeline.append({"$skip": skip})
     pipeline.append({"$limit": page_size})
 
-    cursor = collection.aggregate(pipeline)
-    return list(cursor)
+    result = list(collection.aggregate(pipeline))
+    if result:
+        if "borrowed_books" in result[0]:
+            set_book_titles(result)
+
+    return result
+
+
+def set_book_titles(data: List[dict]):
+    collections = db["books"]
+    for book in data:
+        try:
+            for index, borrowed_book_id in enumerate(book["borrowed_books"]):
+                o_id = ObjectId(borrowed_book_id)
+                book["borrowed_books"][index] = collections.find_one({"_id": o_id}, {"title": 1})
+        except KeyError:
+            continue
+    return data
+
 
 def get_author_count():
     collection = db["authors"]

@@ -41,8 +41,8 @@ def test_get_author_by_keyword():
 
 
 def test_user_projection():
-    params = {"sort": 1, "filter": "name"}
+    params = {"sort": 1, "param": "name"}
     params = UserDisplayParams(**params)
-    res = user_projection(params)
+    res = user_projection(params, 0)
     print(res)
     assert res is not None
