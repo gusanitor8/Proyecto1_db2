@@ -1,12 +1,19 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, Response
 from Connection.crud_ops import get_books, get_book_by_name, get_book_image, get_author_by_id, add_author, \
-    update_author, delete_author, add_book, update_book, get_author_by_keyword
+    update_author, delete_author, add_book, update_book, get_author_by_keyword, delete_book
 from utils.JsonEncoder import JSONencoder
+from Connection.agregations import get_author_count, get_book_count
 from data_classes.data_classes import Authors, Books
 import json
 
 responses_router = APIRouter()
+
+
+@responses_router.get("/libros/count", tags=["books"])
+def get_books_count_():
+    count = get_book_count()
+    return JSONResponse(content={"count": count}, status_code=200)
 
 
 @responses_router.get("/libros/{page}", tags=["books"])
@@ -48,6 +55,15 @@ def add_book_(book: Books, author_id: str):
         return Response(content="Error, author not added", status_code=500)
 
 
+@responses_router.delete("/libros/delete/{book_id}", tags=["books"])
+def delete_book_(book_id: str):
+    flag = delete_book(book_id)
+    if flag:
+        return Response(content="Success, book deleted", status_code=200)
+    else:
+        return Response(content="Error, book not deleted", status_code=500)
+
+
 @responses_router.put("/libros/update/{book_id}", tags=["books"])
 def update_book_(book: Books, book_id: str):
     flag = update_book(book, book_id)
@@ -55,6 +71,12 @@ def update_book_(book: Books, book_id: str):
         return Response(content="Success, author updated", status_code=200)
     else:
         return Response(content="Error, author not updated", status_code=500)
+
+
+@responses_router.get("/authors/count", tags=["authors"])
+def get_authors_count_():
+    count = get_author_count()
+    return JSONResponse(content={"count": count}, status_code=200)
 
 
 @responses_router.post("/authors/add", tags=["authors"])

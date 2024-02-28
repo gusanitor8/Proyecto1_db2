@@ -39,3 +39,13 @@ def get_top_authors():
 
     results = list(collection.aggregate(pipeline))
     return results
+
+
+def get_author_count():
+    collection = db["authors"]
+    return collection.count_documents({})
+
+
+def get_book_count():
+    collection = db["books"]
+    return collection.count_documents({})

@@ -32,6 +32,16 @@ def get_book_image(name: str):
     return None
 
 
+def delete_book(book_id: str):
+    collection = db["books"]
+    try:
+        collection.delete_one({"_id": ObjectId(book_id)})
+        return True
+    except Exception as e:
+        print(f"Error deleting book: {e}")
+        return False
+
+
 def get_author_by_keyword(keyword: str):
     collection = db["authors"]
     pipeline = [
