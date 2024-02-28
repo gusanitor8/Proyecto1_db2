@@ -20,3 +20,9 @@ class Authors(BaseModel):
     birth_date: str
     biography: str
     nationality: str
+
+
+class UserDisplayParams(BaseModel):
+    sort: Optional[int] = None
+
+    pass

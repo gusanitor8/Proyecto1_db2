@@ -108,7 +108,7 @@ def update_author_(author: Authors, author_id: str):
         return Response(content="Error, author not updated", status_code=500)
 
 
-@responses_router.get("/authors/get/{author_id}", tags=["authors"])
+@responses_router.get("/authors/get/id/{author_id}", tags=["authors"])
 def get_author_by_id_(author_id: str):
     result = get_author_by_id(author_id)
 
@@ -126,3 +126,9 @@ def delete_author_(author_id: str):
         return Response(content="Success, author deleted", status_code=200)
     else:
         return Response(content="Error, author not deleted", status_code=500)
+
+
+@responses_router.put("/users/get/{page}", tags=["users"])
+def display_users_(page: int):
+    # TODO: Implement this
+    pass
