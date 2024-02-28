@@ -50,12 +50,6 @@ def get_author_by_keyword(keyword: str):
             # Match documents where "name" field contains the keyword (case-insensitive)
         },
         {
-            "$project": {
-                "_id": 1,  # Exclude the original "_id" field if not needed
-                "name": 1,  # Include the "name" field
-            }
-        },
-        {
             "$limit": 10  # Limit the results to 10
         }
     ]
