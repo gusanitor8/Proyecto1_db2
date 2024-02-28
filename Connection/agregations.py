@@ -100,3 +100,8 @@ def get_author_count():
 def get_book_count():
     collection = db["books"]
     return collection.count_documents({})
+
+
+def get_user_count():
+    collection = db["users"]
+    return collection.count_documents({})

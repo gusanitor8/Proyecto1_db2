@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse, Response
 from Connection.crud_ops import get_books, get_book_by_name, get_book_image, get_author_by_id, add_author, \
     update_author, delete_author, add_book, update_book, get_author_by_keyword, delete_book
 from utils.JsonEncoder import JSONencoder
-from Connection.agregations import get_author_count, get_book_count, user_projection
+from Connection.agregations import get_author_count, get_book_count, user_projection, get_user_count
 from data_classes.data_classes import Authors, Books, UserDisplayParams
 import json
 
@@ -138,3 +138,9 @@ def display_users_(params: UserDisplayParams, page: int):
         return Response(content=result, media_type="application/json", status_code=200)
     else:
         return Response(content=None, status_code=404)
+
+
+@responses_router.get("/users/count", tags=["users"])
+def get_users_count_():
+    count = get_user_count()
+    return JSONResponse(content={"count": count}, status_code=200)
